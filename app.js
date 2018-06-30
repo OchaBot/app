@@ -26,7 +26,18 @@ bot.on('message', message => {
 				name : "-çay",
 				value : "Deneme komutu.",
 				inline : true
-			}]
+			},
+			{
+				name : "-puanım",
+				value : "Mevcut çay puanımı göster. (planlanıyor)",
+				inline : true
+			},
+			{
+				name : "-bonus",
+				value : "Günlük çay puanını almak için yaz. (planlanıyor)",
+				inline : true
+			}
+			]
 		}});
 	}
 });

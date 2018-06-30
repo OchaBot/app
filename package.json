@@ -1,0 +1,30 @@
+{
+  "name": "OchaBot",
+  "version": "1.0.0",
+  "description": "OchaBot",
+  "main": "app.js",
+  "engines": {
+    "node": "10.5.0"
+  },
+  "dependencies": {
+    "discord.js": "^11.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"test\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OchaBot/app.git"
+  },
+  "keywords": [
+    "ochabot",
+    "bot"
+  ],
+  "author": "Matsuo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OchaBot/app/issues"
+  },
+  "homepage": "https://github.com/OchaBot/app#readme"
+}
