@@ -44,5 +44,5 @@ bot.on('message', message => {
 
 bot.on('ready', () => { bot.user.setActivity('-yardım')	});
 
-bot.login(process.env.BOT_TOKEN);
-// NDYyMzc3MTEyOTg5MzM1NTcy.Dhg92A.GiLaFONey9oKxPHeGhzswQeEnU8
+bot.login('NDYyMzc3MTEyOTg5MzM1NTcy.Dhg92A.GiLaFONey9oKxPHeGhzswQeEnU8');
+// 
