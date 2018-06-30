@@ -53,6 +53,18 @@ bot.on('message', message => {
 		}});
 	}
 	
+	if(msg=== prefix + 'POINTS'){
+		message.channel.send({embed: 
+		{
+			color:0x30db52,
+			author : {
+				name : sender.username,
+				icon_url: sender.avatarURL
+			},
+			description: 'Your tea points: ' + userData[sender.id + message.guild.id].puan + ':tea:'
+		}});
+	}
+	
 	if(msg=== prefix + 'BONUS'){
 		var d = new Date();
 		if(!userData[sender.id + message.guild.id]) userData[sender.id + message.guild.id] = {};
