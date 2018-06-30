@@ -17,7 +17,7 @@ bot.on('message', message => {
 		if (err) console.error(err);
 	})
 	
-	if(msg === prefix + ('tea'))
+	if(msg === prefix + ('TEA'))
 	{
 		console.log(msg.name);
 		var num = Math.floor(Math.random() * 5);
