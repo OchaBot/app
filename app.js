@@ -17,23 +17,23 @@ bot.on('message', message => {
 
 		message.channel.send({embed: 
 		{
-			color:0xdd4318,
+			color:0x30db52,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-				name : "-çay",
+				name : {embed:"-çay"},
 				value : "Deneme komutu.",
 				inline : true
 			},
 			{
-				name : "-puanım",
+				name : {embed:"-puanım"},
 				value : "Mevcut çay puanımı göster. (planlanıyor)",
 				inline : true
 			},
 			{
-				name : "-bonus",
+				name : {embed:"-bonus"},
 				value : "Günlük çay puanını almak için yaz. (planlanıyor)",
 				inline : true
 			}
