@@ -5,6 +5,16 @@ const prefix='-';
 // userData2 => userData
 let userData=JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
 
+bot.on('guildMemberAdd', member => {
+  // Send the message to a designated channel on a server:
+  const channel = member.guild.channels.find('name', 'member-log');
+  // Do nothing if the channel wasn't found on this server
+  if (!channel) return;
+  // Send the message, mentioning the member
+  channel.send(`Sunucuya hoş geldin, ${member}`);
+});
+
+
 bot.on('message', async message => {
 	if(message.channel.type === 'dm') return;
 	if(message.author.bot) return;
@@ -24,7 +34,7 @@ bot.on('message', async message => {
 
 	if(args[0] === 'BAHIS')
 	{
-		if(args[3]===undefined && args[2]<50 && userData[sender.id + message.guild.id].puan>args[1])
+		if(args[3]===undefined && args[2]<50 && userData[sender.id + message.guild.id].puan>args[1] && args[1]>0)
 		{
 				var num = Math.floor(Math.random() * 50);
 				if(num==args[2])
@@ -54,7 +64,7 @@ bot.on('message', async message => {
 					},
 					fields: [{
 						name:'Kaybettin!',
-						value:'Bahsi kaybettin. (-' + args[1] + '). Çıkan sayı: [' + num + ']'
+						value:'Bahsi kaybettin (-' + args[1] + '). Çıkan sayı: [' + num + ']'
 					}]
 					}});
 				}
@@ -73,7 +83,7 @@ bot.on('message', async message => {
 	if(args[0] === 'BET')
 	{
 		console.log(userData[sender.id + message.guild.id].puan>args[1]);
-		if(args[3]===undefined && args[2]<50 && userData[sender.id + message.guild.id].puan>args[1])
+		if(args[3]===undefined && args[2]<50 && userData[sender.id + message.guild.id].puan>args[1] && args[1]>0)
 		{
 				var num = Math.floor(Math.random() * 50);
 				if(num==args[2])
