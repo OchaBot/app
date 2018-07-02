@@ -333,6 +333,10 @@ bot.on('message', async message => {
 			{
 				name : '-daily',
 				value : 'Get your daily tea points.',
+			},
+			{
+				name : '-bet (points) (number)',
+				value : 'Bet your points for a guessing. Number should be (0-49). Ex: -bet 5 21',
 			}
 			]
 		}});
@@ -360,7 +364,7 @@ bot.on('message', async message => {
 			},
 			{
 				name : '-bahis (puan) (tahmin)',
-				value : 'Belirtilen puan miktarında bahis yap. Tahmininiz (0-49) arası olmalıdır. Örnek kullanım : -zar 5 41'
+				value : 'Belirtilen puan miktarında bahis yap. Tahmininiz (0-49) arası olmalıdır. Örnek kullanım : -bahis 5 41'
 			}
 			]
 		}});
