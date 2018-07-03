@@ -28,7 +28,7 @@ bot.on('message', async message => {
 	if(!userData[sender.id + message.guild.id].quest) userData[sender.id + message.guild.id].quest=false;
 	if(!userData.pick) userData.pick = false;
 
-	fs.writeFile('Storage/userData2.json', JSON.stringify(userData), (err) => {
+	fs.writeFile('Storage/userData.json', JSON.stringify(userData), (err) => {
 		if (err) console.error(err);
 	})
 
@@ -259,7 +259,7 @@ bot.on('message', async message => {
 	{
 			var d = new Date();
 			if(!userData[sender.id + message.guild.id]) userData[sender.id + message.guild.id] = {};
-			if(!userData[sender.id + message.guild.id].sure || new Date(userData[sender.id + message.guild.id].sure).getDay() - d.getDay() >= 1 || new Date(userData[sender.id + message.guild.id].sure).getMonth() - d.getMonth() >= 1 || new Date(userData[sender.id + message.guild.id].sure).getYear() - d.getYear >= 1 ){
+			if(!userData[sender.id + message.guild.id].sure || d.getDay() - new Date(userData[sender.id + message.guild.id].sure).getDay() >= 1 || d.getMonth() - new Date(userData[sender.id + message.guild.id].sure).getMonth() >= 1 || d.getYear - new Date(userData[sender.id + message.guild.id].sure).getYear() >= 1 ){
 				userData[sender.id + message.guild.id].puan += 25;
 				userData[sender.id + message.guild.id].sure = d;
 				message.channel.send({embed:
@@ -293,7 +293,7 @@ bot.on('message', async message => {
 	{
 			var d = new Date();
 			if(!userData[sender.id + message.guild.id]) userData[sender.id + message.guild.id] = {};
-			if(!userData[sender.id + message.guild.id].sure || new Date(userData[sender.id + message.guild.id].sure).getDay() - d.getDay() >= 1 || new Date(userData[sender.id + message.guild.id].sure).getMonth() - d.getMonth() >= 1 || new Date(userData[sender.id + message.guild.id].sure).getYear() - d.getYear >= 1 ){
+			if(!userData[sender.id + message.guild.id].sure || d.getDay() - new Date(userData[sender.id + message.guild.id].sure).getDay() >= 1 || d.getMonth() - new Date(userData[sender.id + message.guild.id].sure).getMonth() >= 1 || d.getYear - new Date(userData[sender.id + message.guild.id].sure).getYear() >= 1 ){
 				userData[sender.id + message.guild.id].puan += 25;
 				userData[sender.id + message.guild.id].sure = d;
 				message.channel.send({embed:
