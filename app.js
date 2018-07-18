@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const git = require('simple-git');
 const bot= new Discord.Client();
 const fs = require('fs');
+const fs2 = require('fs');
 const prefix='-';
 // userData2 => userData
 let userData= JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
@@ -15,67 +16,145 @@ bot.on('guildMemberAdd', member => {
   channel.send(`Sunucuya hoş geldin, ${member}`);
 });
 
-function updateGit()
-{
-  git().add('*');
-  git().commit('OchaBot updates');
-  git().push(['origin','master']);
-}
-
 bot.on('message', async message => {
 	if(message.channel.type === 'dm') return;
-	if(message.author.bot) return;
+  if(message.author.bot && message.content === "Numara belirleniyor...:game_die:" || message.content === "Finding a number...:game_die:") {
+    message.delete();
+  }
+  if(message.author.bot) return;
 
 	let msg = message.content.toUpperCase();
 	let sender = message.author;
-
-  if(sender.id === 292688279839703040)
+  if(sender.id === '292688279839703040')
   {
-      message.edit("`" + message.content + "`");
+      message.editCode(message.content)
+      .catch((err) => {console.log(err)});
   }
 	let args = msg.slice(1).trim().split(" ");
 
   var date = new Date();
+  function generatePoints()
+  {
+    var min = 10;
+    var max = 30;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function writeData()
+  {
+    fs.writeFile('Storage/userData.json', JSON.stringify(userData), (err) => {
+  		if (err) console.error(err);
+  	});
+  }
+
+
+
+  var num = Math.floor(Math.random() * 20);
+
+  if(num === 9 && userData.pick ===false)
+  {
+     userData.pick=true;
+     if(userData[sender.id].lng === "English")
+     {
+     message.channel.send({embed:{
+       color:0xffebb8,
+       author : {
+       name : bot.user.username,
+       icon_url: bot.user.avatarURL
+       },
+       fields:[{name:'`-pick` your points!',value:'S-senpai!'}]
+     }});
+     }
+     else {
+       message.channel.send({embed:{
+         color:0xffebb8,
+         author : {
+         name : bot.user.username,
+         icon_url: bot.user.avatarURL
+         },
+         fields:[{name:'Puanını `-al`',value:'Senpa-i~!'}]
+       }});
+     }
+  }
 
   if(!userData[sender.id]) userData[sender.id]={};
+  if(!userData[sender.id].lng)
+  {
+     message.channel.send("[TR] <@" + sender.id + ">, Varsayılan diliniz `Türkçe` olarak ayarlandı. Değiştirmek için `-language` komutunu kullanın.");
+     message.channel.send("[EN] <@" + sender.id + ">, Your default language is set to `Turkish`. To change this, use `-language` command.");
+     userData[sender.id].lng="Turkish";
+  }
   if(!userData[sender.id].puan) userData[sender.id].puan=150;
+  if(!userData[sender.id].xp) userData[sender.id].xp=0;
+  if(!userData[sender.id].count) userData[sender.id].count=0;
+  if(!userData[sender.id].teaKind) userData[sender.id].teaKind="tea";
+  if(!userData[sender.id].level) userData[sender.id].level=1;
 	if(!userData.pick) userData.pick = false;
-	fs.writeFile('Storage/userData.json', JSON.stringify(userData), (err) => {
-		if (err) console.error(err);
-	});
-  updateGit();
+  userData[sender.id].xp+=generatePoints();
+
+  if(date.getDay() - new Date(userData[sender.id].timeCount).getDay() >= 1 || date.getHours() - new Date(userData[sender.id].timeCount).getHours() >= 20 || date.getMonth() - new Date(userData[sender.id].timeCount).getMonth() >= 1 || date.getYear() - new Date(userData[sender.id].timeCount).getYear() >= 1)
+  {
+     userData[sender.id].count=0;
+  }
+  var nxtlvl = userData[sender.id].level*150;
+  if(nxtlvl<= userData[sender.id].xp)
+  {
+     userData[sender.id].level++;
+     if(userData[sender.id].lng === "English")
+     {
+       message.channel.send({embed:{
+         color:0xffebb8,
+         author : {
+         name : sender.username,
+         icon_url: sender.avatarURL
+         },
+         fields:[{name:'Level up!',value:'You are `level ' + userData[sender.id].level + '` now!'}]
+       }});
+     }
+     else {
+       message.channel.send({embed:{
+         color:0xffebb8,
+         author : {
+         name : sender.username,
+         icon_url: sender.avatarURL
+         },
+         fields:[{name:'Seviye atlandı!',value:'Artık `seviye ' + userData[sender.id].level + '` oldunuz!'}]
+       }});
+     }
+
+  }
+	writeData();
+
 
  // ` (backtick)
 	if(args[0] === 'BAHIS')
 	{
     console.log(sender.username + ' şu komutu kullandı : ' + args[0]);
-		if(args[3]===undefined && args[2]<15 && userData[sender.id].puan>=args[1] && args[1]>0 && args[2]>=0)
+		if(args[3]===undefined && args[2]<=15 && userData[sender.id].puan>=args[1] && args[1]>0 && args[2]>=0)
 		{
-			  var num = await Math.floor(Math.random() * 15);
-        message.channel.send("Numara belirleniyor...:game_die:")
+			  var num = await Math.floor(Math.random() * 16);
+        message.channel.send("Numara belirleniyor...:game_die:");
 				if(num==args[2])
 				{
-          message.delete();
 					userData[sender.id].puan += args[1]*5;
 					message.channel.send({embed:
 						{
-							color:0x30db52,
+							color:0xffebb8,
 							author : {
 							name : sender.username,
 							icon_url: sender.avatarURL
 						},
 						fields: [{
 							name:'Kazandınız!',
-							value:'Bahsi kazandınız `(+' + args[1]*3 + ')`!'
+							value:'Bahsi kazandınız `(+' + args[1]*5 + ')`!'
 						}]
 						}});
 				}
 				else {
-          message.delete();
 					userData[sender.id].puan -= args[1];
 					message.channel.send({embed:
 					{
-					color:0x30db52,
+					color:0xffebb8,
 					author : {
 						name : sender.username,
 						icon_url: sender.avatarURL
@@ -86,48 +165,44 @@ bot.on('message', async message => {
 					}]
 					}});
 				}
-
-
-
+        writeData();
 		}
 		else if(userData[sender.id].puan<args[1]){
-			message.channel.send('<@' + sender.id + +'>, çay puanınız yetersiz.');
+			message.channel.send('<@' + sender.id +'>, çay puanınız yetersiz.');
 		}
 		else {
-			message.channel.send('<@' + sender.id + +'>, yanlış veya eksik komut girdiniz.');
+			message.channel.send('<@' + sender.id +'>, yanlış veya eksik komut girdiniz.');
 		}
 	}
 
 	if(args[0] === 'BET')
 	{
     console.log(sender.username + ' used command : ' + args[0]);
-		if(args[3]===undefined && args[2]<15 && userData[sender.id].puan>=args[1] && args[1]>0 && args2[0]>=0)
+		if(args[3]===undefined && args[2]<=15 && userData[sender.id].puan>=args[1] && args[1]>0 && args2[0]>=0)
 		{
-				var num = await Math.floor(Math.random() * 15);
+				var num = await Math.floor(Math.random() * 16);
         message.channel.send("Finding a number...:game_die:")
 				if(num==args[2])
 				{
-          message.delete();
 					userData[sender.id].puan += args[1]*5;
 					message.channel.send({embed:
 						{
-							color:0x30db52,
+							color:0xffebb8,
 							author : {
 							name : sender.username,
 							icon_url: sender.avatarURL
 						},
 						fields: [{
 							name:'You won!',
-							value:'You won the bet `(+' + args[1]*3 + ')`!'
+							value:'You won the bet `(+' + args[1]*5 + ')`!'
 						}]
 						}});
 				}
 				else {
-          message.delete();
 					userData[sender.id].puan -= args[1];
 					message.channel.send({embed:
 					{
-					color:0x30db52,
+					color:0xffebb8,
 					author : {
 						name : sender.username,
 						icon_url: sender.avatarURL
@@ -138,109 +213,95 @@ bot.on('message', async message => {
 					}]
 					}});
 				}
-
-
-
+        writeData();
 		}
 		else if(userData[sender.id].puan<args[1]){
-			message.channel.send('<@' + sender.id + +'>, not enough tea points.');
+			message.channel.send('<@' + sender.id +'>, not enough tea points.');
 		}
 		else {
-			message.channel.send('<@' + sender.id + +'>, wrong or missing command.');
+			message.channel.send('<@' + sender.id +'>, wrong or missing command.');
 		}
 	}
 
-	if(msg === prefix + ('TEA'))
+	if(msg === prefix + ('DRINK') && userData[sender.id].count <=3)
 	{
+      var d = new Date();
 			console.log(sender.username + ' used command : ' + args[0]);
-			console.log('returned ' + num + ' number from random.');
-			if (num == 0) message.channel.send('<@' + sender.id +'>, you made my day.');
-			else if (num == 1) message.channel.send( '<@' + sender.id +'>, my algorithms telling me to stay away from you!');
-			else if (num == 2) message.channel.send('<@' + sender.id +'>, no more tea to you, hmph.');
-			else if (num == 3) message.channel.send('<@' + sender.id +'>, want me to brew a tea for you?');
-			else if (num == 4) message.channel.send('<@' + sender.id +'>, i could easily delete your ' + userData[sender.id].puan + ' points you know.');
-			else if (num == 5)
-			{
-				message.channel.send('<@' + sender.id +'> SENPAI?');
-				message.channel.send('OchaBot used SENPAI keyword! Type -pick to get your reward!');
-				userData.pick=true
-			}
-			else if (num == 6) message.channel.send('<@' + sender.id +'>, maybe you should take an ice tea.');
-			else if (num == 7) message.channel.send('<@' + sender.id +'>! 私もお茶お大好きですよ!');
-			else if (num == 8) message.channel.send('<@' + sender.id +'> here is your tea.');
-			else message.channel.send('<@' + sender.id +'> im bored too but i still do my job.');
+      var x = await generatePoints();
+      message.channel.send("Making `" + userData[sender.id].teaKind + "`...");
+      message.channel.send("Your order `" + userData[sender.id].teaKind + " is ready! `(+ " + x + ")` `[ " + userData[sender.id].count + "/3]");
+      userData[sender.id].puan +=x;
+      userData[sender.id].timeCount=d;
 	}
+  else if(userData[sender.id].count > 5){
+      message.channel.send("Cant make `" + userData[sender.id].teaKind + "` anymore. `(3/3)`");
+      userData[sender.id].count++;
 
-	if(msg === prefix + ('ÇAY'))
+  }
+
+	if(msg === prefix + ('IÇ') && userData[sender.id].count <=3)
 	{
+      var d = new Date();
 			console.log(sender.username + ' şu komutu kullandı : ' + args[0]);
-
-			var num = Math.floor(Math.random() * 10);
-			if(num == 0) message.channel.send('<@' + sender.id +'>, işte çayınız.');
-			else if (num == 1) message.channel.send( '<@' + sender.id +'> belki bir bot olabilirim, ama benim de duygularım var!');
-			else if (num == 2) {
-				message.channel.send('<@' + sender.id +'>, Detroit - Become Human oyununu biliyor musun?');
-				if(!userData[sender.id].quest) { userData[sender.id].quest = true;}
-			}
-			else if (num == 3) {
-				message.channel.send('<@' + sender.id +'> SENPAAAAAAAAAAAAAAAI!');
-				message.channel.send('OchaBot SENPAI anahtarını kullandı! Ödülü almak için -al yaz!');
-				userData.pick=true;
-			}
-			else if (num == 4) message.channel.send('<@' + sender.id +'>、あなたのお茶は美味しいかったですか?');
-			else if (num == 5 && sender.id== 270173785280217088) message.channel.send('<@' + sender.id +'>, bana hayat veren kişi. Sizi eğlendirmek bot olarak benim görevim.');
-			else if (num == 5 && sender.id== 292688279839703040) message.channel.send('<@' + sender.id +'>, beni sunucuda barındıran ve geliştiricimin arkadaşı. Sizi eğlendirmek için elimden geleni yapacağım.');
-			else if (num == 5) message.channel.send('<@' + sender.id +'> size bir çay ısmarlamama ne dersiniz?');
-			else if (num == 6) message.channel.send('<@' + sender.id +'> bir bot, bir bota \'bip bopbipbop, bip bopbop bibbibbop bibbopbib\' demiş.');
-			else if (num == 7) message.channel.send('<@' + sender.id +'> bazen sadece bot olmak istersin.');
-			else if (num == 8) message.channel.send('<@' + sender.id +'>, ben şansa inanmam, başarmanın tek sırrı çok kodlamak.');
-			else message.channel.send('<@' + sender.id +'>, bilgisayar ile kurduğum iletişim ve sizinle kurduğum iletişim arasında 1 0 fark var.');
+      var x = await generatePoints();
+      message.channel.send("`" + userData[sender.id].teaKind + "` hazırlanıyor...");
+      message.channel.send("Siparişiniz olan `" + userData[sender.id].teaKind + " hazır! `(+ " + x + ")` `[ " + userData[sender.id].count + "/3]");
+      userData[sender.id].puan +=x;
+      userData[sender.id].count++;
+      userData[sender.id].timeCount=d;
 	}
+  else if(userData[sender.id].count > 5){
+      message.channel.send("`" + userData[sender.id].teaKind + "` artık hazırlanamıyor. `(3/3)`");
+  }
 
 	if(msg === prefix + ('PICK') && userData.pick === true)
 	{
-      console.log(sender.username + ' picked up tea points.');
+      console.log(sender.username + ' picked up extra points.');
 			userData.pick = false;
 			message.delete();
-			userData[sender.id].puan += 10;
+      var points = generatePoints();
+			userData[sender.id].puan += points;
 			message.channel.send({embed:
 			{
-			color:0x30db52,
+			color:0xffebb8,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-				name:'Picked up tea points',
-				value:'<@' + sender.id +'>, you got extra tea points (+10).  We are out of sugar, sorry.'
+				name:'Picked up points',
+				value:'<@' + sender.id +'>, you got extra points `(+' + points + ')`.'
 			}]
 			}});
+      writeData();
 	}
 
 	if(msg === prefix + ('AL') && userData.pick === true)
 	{
-    console.log(sender.username + ' çay puanı aldı.');
+    console.log(sender.username + ' ekstra puanı aldı.');
 			userData.pick = false;
 			message.delete();
-			userData[sender.id].puan += 10;
+      var points = generatePoints();
+			userData[sender.id].puan += points;
 			message.channel.send({embed:
 			{
-			color:0x30db52,
+			color:0xffebb8,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-				name:'Çay puanı kazandınız.',
-				value:'<@' + sender.id +'>, ekstra çay puanı kazandınız `(+10)`.'
+				name:'Puan kazandınız.',
+				value:'<@' + sender.id +'>, ekstra puan kazandınız `(+' + points + ')`.'
 			}]
 			}});
+      writeData();
 	}
 
 	if(msg=== prefix + 'PUANIM'){
 			message.channel.send({embed:
 			{
-				color:0x30db52,
+				color:0xffebb8,
 				author : {
 					name : sender.username,
 					icon_url: sender.avatarURL
@@ -252,7 +313,7 @@ bot.on('message', async message => {
 	if(msg=== prefix + 'POINTS'){
 			message.channel.send({embed:
 			{
-				color:0x30db52,
+				color:0xffebb8,
 				author : {
 					name : sender.username,
 					icon_url: sender.avatarURL
@@ -267,32 +328,33 @@ bot.on('message', async message => {
 	{
 			var d = new Date();
 			if(!userData[sender.id]) userData[sender.id] = {};
-			if(!userData[sender.id].sure || d.getHours() - new Date(userData[sender.id].sure).getHours() >= 20 && userData[sender.id].sure || d.getDay() || d.getMonth() - new Date(userData[sender.id].sure).getMonth() >= 1 || d.getYear - new Date(userData[sender.id].sure).getYear() >= 1 ){
+			if(!userData[sender.id].sure || d.getHours() - new Date(userData[sender.id].sure).getHours() >= 20 || d.getDay() - new Date(userData[sender.id].sure).getDay() >=1 || d.getMonth() - new Date(userData[sender.id].sure).getMonth() >= 1 || d.getYear - new Date(userData[sender.id].sure).getYear() >= 1 ){
 				userData[sender.id].puan += 25;
 				userData[sender.id].sure = d;
 				message.channel.send({embed:
 				{
-				color:0x30db52,
+				color:0xffebb8,
 				author : {
 					name : bot.user.username,
 					icon_url: bot.user.avatarURL
 				},
 				fields: [{
 					name:'Günlük bonus',
-					value:'<@' + sender.id +'>, günlük çayınız demlendi `(+25)`.'
+					value:'<@' + sender.id +'>, günlük ' + userData.teaKind + ' içeceğiniz hazır `(+25)`.'
 				}]
 				}});
+        writeData();
 	}
 	else message.channel.send({embed:
 	{
-			color:0x30db52,
+			color:0xffebb8,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-					name:'Üzgünüm!',
-					value:'Günde sadece 1 bardak çay ikram edebiliyorum!'
+					name:'Neeee?!',
+					value:'Ben size çay vermiştim a-ama? (Belki de veritabanım yine arızalıdır!)'
 			}]
 			}});
 	}
@@ -306,27 +368,28 @@ bot.on('message', async message => {
 				userData[sender.id].sure = d;
 				message.channel.send({embed:
 				{
-				color:0x30db52,
+				color:0xffebb8,
 				author : {
 					name : bot.user.username,
 					icon_url: bot.user.avatarURL
 				},
 				fields: [{
 					name:'Daily bonus',
-					value:'<@' + sender.id +'>, brewed your daily tea (+25).  Want some sugar?'
+					value:'<@' + sender.id +'>, your daily drink ' + userData.teaKind + ' is ready `(+25)`.'
 				}]
 				}});
+        writeData();
 	}
 			else message.channel.send({embed:
 			{
-				color:0x30db52,
+				color:0xffebb8,
 				author : {
 					name : bot.user.username,
 					icon_url: bot.user.avatarURL
 				},
 				fields: [{
-					name:'So sorry!',
-					value:'I am only allowed to give 1 glass of tea everyday!'
+					name:'Oops!',
+					value:'Looks like you are out of quota, or my database sucks!'
 			}]
 			}});
 	}
@@ -335,62 +398,144 @@ bot.on('message', async message => {
 	{
 			message.channel.send({embed:
 			{
-			color:0x30db52,
+			color:0xffebb8,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-				name : '-tea',
-				value : 'Would you like to drink some tea with me?',
+				name : '-drink',
+				value : 'All kinds are available on -mydrink `<teaname>` command.',
 			},
 			{
 				name : '-points',
-				value : 'Show my current tea points.',
+				value : 'Let me show your points.',
 			},
 			{
 				name : '-daily',
-				value : 'Get your daily tea points.',
+				value : 'Well, my database is out of service. `Warned.` Go on, and take a risk.',
 			},
 			{
 				name : '-bet (points) (number)',
-				value : 'Bet your points for a guessing. Number should be (0-49). Ex: -bet 5 21',
+				value : 'Bet your points for a guessing. Number should be `(0-15)`. Ex: `-bet 5 0`',
+			},
+      {
+				name : '-level',
+				value : 'Let me show your level. It should be somewhere here.',
+			},
+      {
+				name : '-language',
+				value : 'Okay, I will be service on english.',
 			}
 			]
 		}});
 	}
 
+  if(msg=== prefix + 'LEVEL'){
+    message.channel.send({embed:{
+      color:0xffebb8,
+      author : {
+      name : sender.username,
+      icon_url: sender.avatarURL
+      },
+      fields:[{name:'There it is!',value:'Looks like you are `level ' + userData[sender.id].level + '` right now and you need `' + userData[sender.id].level*150-userData[sender.id].xp + '` experience points for next level.'}]
+    }});
+  }
+  if(args[0] === 'IÇERIM' && args[1]!= undefined){
+    userData[sender.id].teaKind=args[1].toLowerCase();;
+    message.channel.send({embed:
+    {
+    color:0xffebb8,
+    author : {
+      name : sender.username,
+      icon_url: sender.avatarURL
+    },
+    description:"Tercihiniz kaydedildi."
+  }});
+  }
+
+  if(args[0] === 'MYDRINK' && args[1]!= undefined){
+    userData[sender.id].teaKind=args[1].toLowerCase();
+    message.channel.send({embed:
+    {
+    color:0xffebb8,
+    author : {
+      name : sender.username,
+      icon_url: sender.avatarURL
+    },
+    description:"Drink saved."
+  }});
+  }
+
+  if(msg=== prefix + 'LANGUAGE'){
+    message.channel.send("Your default language is now `-English-`.");
+    userData[sender.id].lng="English";
+  }
+
+  if(msg=== prefix + 'DIL'){
+    message.channel.send("Artık varsayılan diliniz `-Türkçe-`.");
+    userData[sender.id].lng="Turkish";
+  }
+
+  if(msg=== prefix + 'SEVIYE'){
+    message.channel.send({embed:{
+      color:0xffebb8,
+      author : {
+      name : sender.username,
+      icon_url: sender.avatarURL
+      },
+      fields:[{name:'İşte buradaymış!',value:'Sanırım `seviye ' + userData[sender.id].level + '` olduğunuz ve diğer seviye için `' + userData[sender.id].level*150-userData[sender.id].xp + '` tecrübe gerektiği yazıyor.'}]
+    }});
+  }
+
 	if(msg=== prefix + 'YARDIM'){
 		message.channel.send({embed:
 		{
-			color:0x30db52,
+			color:0xffebb8,
 			author : {
 				name : bot.user.username,
 				icon_url: bot.user.avatarURL
 			},
 			fields: [{
-				name : '-çay',
-				value : 'Beraber çay içmek ister misin?',
+				name : '-iç',
+				value : 'Çeşitler için : -içerim `<çay adı>`',
 			},
 			{
 				name : '-puanım',
-				value : 'Mevcut çay puanımı göster.',
+				value : 'Mevcut puanınızı hemen gösterebilirim.',
 			},
 			{
 				name : '-bonus',
-				value : 'Günlük çay puanını almak için yaz.',
+				value : 'Veritabanım arızalı. Lütfen bonus alırken bunu göz önünde bulundurun.',
 			},
 			{
 				name : '-bahis (puan) (tahmin)',
-				value : 'Belirtilen puan miktarında bahis yap. Tahmininiz (0-49) arası olmalıdır. Örnek kullanım : -bahis 5 41'
+				value : 'Belirtilen puan miktarında bahis yap. Tahmininiz `(0-15)` arası olmalıdır. Örnek kullanım : `-bahis 5 1`'
+			},
+      {
+				name : '-seviye',
+				value : 'Seviyenizi hemen gösterebilirim. Şuralarda bir yerde olacaktı!',
+			},
+      {
+				name : '-dil',
+				value : 'Mevcut dil ayarlarınızı hemen kaydediyorum.',
 			}
 			]
 		}});
 	}
 });
 
-bot.on('ready', () => { bot.user.setActivity('-yardım, -help')});
+
+bot.on('ready', () => { var channel = bot.channels.get("457590277683544084"); bot.user.setActivity('-yardım, -help'); channel.send({embed:{
+  color:0xffebb8,
+  author: {
+      name: bot.user.username + '.v2',
+      icon_url: bot.user.avatarURL
+  },
+  fields:[{name:'Info',value:'OchaBot upgraded her version and ready to service.'}]
+  }});
+});
 bot.on('ready', () => { console.log('OchaBot başladı.')});
 
-bot.login('NDYyOTcyNzgyNTQ4ODc3MzEy.Dhu4Hg.lIE-t-oHro53StCP8Xe4e4yHPeo');
+bot.login(process.env.token);
 //process.env.token
