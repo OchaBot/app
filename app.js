@@ -223,7 +223,7 @@ bot.on('message', async message => {
 		}
 	}
 
-	if(msg === prefix + ('DRINK') && userData[sender.id].count <=3)
+	if(msg === prefix + ('DRINK') && userData[sender.id].count <3)
 	{
       var d = new Date();
 			console.log(sender.username + ' used command : ' + args[0]);
@@ -233,13 +233,13 @@ bot.on('message', async message => {
       userData[sender.id].puan +=x;
       userData[sender.id].timeCount=d;
 	}
-  else if(userData[sender.id].count > 3){
+  else if(userData[sender.id].count >= 3 && msg === prefix + ("DRINK")){
       message.channel.send("Cant make `" + userData[sender.id].teaKind + "` anymore. `(3/3)`");
       userData[sender.id].count++;
 
   }
 
-	if(msg === prefix + ('IÇ') && userData[sender.id].count <=3)
+	if(msg === prefix + ('IÇ') && userData[sender.id].count <3)
 	{
       var d = new Date();
 			console.log(sender.username + ' şu komutu kullandı : ' + args[0]);
@@ -251,7 +251,7 @@ bot.on('message', async message => {
       message.channel.send("Siparişiniz olan `" + userData[sender.id].teaKind + "` hazır! `(+ " + x + " puan)` `[ " + userData[sender.id].count + "/3]`");
 
 	}
-  else if(userData[sender.id].count > 3){
+  else if(userData[sender.id].count >= 3 && msg === prefix + ("IÇ")){
       message.channel.send("`" + userData[sender.id].teaKind + "` artık hazırlanamıyor. `(3/3)`");
   }
 
