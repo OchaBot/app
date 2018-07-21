@@ -229,11 +229,11 @@ bot.on('message', async message => {
 			console.log(sender.username + ' used command : ' + args[0]);
       var x = await generatePoints();
       message.channel.send("Making `" + userData[sender.id].teaKind + "`...");
-      message.channel.send("Your order `" + userData[sender.id].teaKind + " is ready! `(+ " + x + ")` `[ " + userData[sender.id].count + "/3]");
+      message.channel.send("Your order `" + userData[sender.id].teaKind + "` is ready! `(+ " + x + " points)` `[ " + userData[sender.id].count + "/3]`");
       userData[sender.id].puan +=x;
       userData[sender.id].timeCount=d;
 	}
-  else if(userData[sender.id].count > 5){
+  else if(userData[sender.id].count > 3){
       message.channel.send("Cant make `" + userData[sender.id].teaKind + "` anymore. `(3/3)`");
       userData[sender.id].count++;
 
@@ -245,12 +245,13 @@ bot.on('message', async message => {
 			console.log(sender.username + ' şu komutu kullandı : ' + args[0]);
       var x = await generatePoints();
       message.channel.send("`" + userData[sender.id].teaKind + "` hazırlanıyor...");
-      message.channel.send("Siparişiniz olan `" + userData[sender.id].teaKind + " hazır! `(+ " + x + ")` `[ " + userData[sender.id].count + "/3]");
-      userData[sender.id].puan +=x;
       userData[sender.id].count++;
+      userData[sender.id].puan +=x;
       userData[sender.id].timeCount=d;
+      message.channel.send("Siparişiniz olan `" + userData[sender.id].teaKind + "` hazır! `(+ " + x + " puan)` `[ " + userData[sender.id].count + "/3]`");
+
 	}
-  else if(userData[sender.id].count > 5){
+  else if(userData[sender.id].count > 3){
       message.channel.send("`" + userData[sender.id].teaKind + "` artık hazırlanamıyor. `(3/3)`");
   }
 
@@ -438,7 +439,7 @@ bot.on('message', async message => {
       name : sender.username,
       icon_url: sender.avatarURL
       },
-      fields:[{name:'There it is!',value:'Looks like you are `level ' + userData[sender.id].level + '` right now and you need `' + userData[sender.id].level*150-userData[sender.id].xp + '` experience points for next level.'}]
+      fields:[{name:'There it is!',value:'Looks like you are `level ' + userData[sender.id].level + '` right now and you need `' + ((userData[sender.id].level*150)-userData[sender.id].xp) + '` experience points for next level.'}]
     }});
   }
   if(args[0] === 'IÇERIM' && args[1]!= undefined){
@@ -484,7 +485,7 @@ bot.on('message', async message => {
       name : sender.username,
       icon_url: sender.avatarURL
       },
-      fields:[{name:'İşte buradaymış!',value:'Sanırım `seviye ' + userData[sender.id].level + '` olduğunuz ve diğer seviye için `' + userData[sender.id].level*150-userData[sender.id].xp + '` tecrübe gerektiği yazıyor.'}]
+      fields:[{name:'İşte buradaymış!',value:'Sanırım `seviye ' + userData[sender.id].level + '` olduğunuz ve diğer seviye için `' + ((userData[sender.id].level*150)-userData[sender.id].xp) + '` tecrübe gerektiği yazıyor.'}]
     }});
   }
 
