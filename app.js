@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 const git = require('simple-git');
 const bot= new Discord.Client();
 const fs = require('fs');
-const fs2 = require('fs');
 const prefix='-';
 // userData2 => userData
 let userData= JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
@@ -22,7 +21,7 @@ bot.on('message', async message => {
     message.delete();
   }
   if(message.author.bot) return;
-
+	
 	let msg = message.content.toUpperCase();
 	let sender = message.author;
   if(sender.id === '292688279839703040')
@@ -45,6 +44,15 @@ bot.on('message', async message => {
     fs.writeFile('Storage/userData.json', JSON.stringify(userData), (err) => {
   		if (err) console.error(err);
   	});
+	try{
+		git().addRemote('heroku','https://git.heroku.com/ocha-bot.git');
+		git().add('./*');
+		git().commit('updates');
+		git().push('heroku','master');
+	}
+	catch (err){
+		console.error(err);
+	}
   }
 
 
@@ -341,7 +349,7 @@ bot.on('message', async message => {
 				},
 				fields: [{
 					name:'Günlük bonus',
-					value:'<@' + sender.id +'>, günlük ' + userData.teaKind + ' içeceğiniz hazır `(+25)`.'
+					value:'<@' + sender.id +'>, günlük ' + userData[sender.id].teaKind + ' içeceğiniz hazır `(+25)`.'
 				}]
 				}});
         writeData();
@@ -376,7 +384,7 @@ bot.on('message', async message => {
 				},
 				fields: [{
 					name:'Daily bonus',
-					value:'<@' + sender.id +'>, your daily drink ' + userData.teaKind + ' is ready `(+25)`.'
+					value:'<@' + sender.id +'>, your daily drink ' + userData[sender.id].teaKind + ' is ready `(+25)`.'
 				}]
 				}});
         writeData();
@@ -533,7 +541,7 @@ bot.on('ready', () => { var channel = bot.channels.get("457590277683544084"); bo
       name: bot.user.username + '.v2',
       icon_url: bot.user.avatarURL
   },
-  fields:[{name:'Info',value:'OchaBot upgraded her version and ready to service.'}]
+  fields:[{name:'Info',value:'OchaBot is currently fighting with database problems!'}]
   }});
 });
 bot.on('ready', () => { console.log('OchaBot başladı.')});
