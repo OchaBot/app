@@ -14,7 +14,7 @@ client.query('CREATE TABLE (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userID B
     console.log(JSON.stringify(row));
   }
   client.end();
-});
+};
 
 const bot= new Discord.Client();
 const fs = require('fs');
