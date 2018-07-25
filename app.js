@@ -6,9 +6,9 @@ const client = new Client({
   ssl: true,
 });
 
-client.connect().then(console.log('Connected to heroku database.'));
+client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+client.query('CREATE TABLE (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userID BIGINT(30), puan INT, xp INT, count INT, drinkKind varchar(255) ,level INT ,lng varchar(255) ,sure varchar(255) ,timecount varchar(255))'), (err, res) => {
   if (err) throw err;
   for (let row of res.rows) {
     console.log(JSON.stringify(row));
@@ -16,7 +16,6 @@ client.query('SELECT table_schema,table_name FROM information_schema.tables;', (
   client.end();
 });
 
-const git = require('simple-git');
 const bot= new Discord.Client();
 const fs = require('fs');
 const prefix='-';
@@ -61,15 +60,6 @@ bot.on('message', async message => {
     fs.writeFile('Storage/userData.json', JSON.stringify(userData), (err) => {
   		if (err) console.error(err);
   	});
-	try{
-		git().addRemote('heroku','https://git.heroku.com/ocha-bot.git');
-		git().add('./*');
-		git().commit('updates');
-		git().push('heroku','master');
-	}
-	catch (err){
-		console.error(err);
-	}
   }
 
 
