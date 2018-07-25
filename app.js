@@ -1,4 +1,21 @@
 const Discord = require('discord.js')
+
+const { Client } = require('pg');
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+client.connect().then(console.log('Connected to heroku database.'));
+
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+  if (err) throw err;
+  for (let row of res.rows) {
+    console.log(JSON.stringify(row));
+  }
+  client.end();
+});
+
 const git = require('simple-git');
 const bot= new Discord.Client();
 const fs = require('fs');
@@ -21,7 +38,7 @@ bot.on('message', async message => {
     message.delete();
   }
   if(message.author.bot) return;
-	
+
 	let msg = message.content.toUpperCase();
 	let sender = message.author;
   if(sender.id === '292688279839703040')
@@ -535,7 +552,7 @@ bot.on('message', async message => {
 });
 
 
-bot.on('ready', () => { var channel = bot.channels.get("457590277683544084"); bot.user.setActivity('-yardım, -help'); channel.send({embed:{
+/*bot.on('ready', () => { var channel = bot.channels.get("457590277683544084"); bot.user.setActivity('-yardım, -help'); channel.send({embed:{
   color:0xffebb8,
   author: {
       name: bot.user.username + '.v2',
@@ -543,7 +560,7 @@ bot.on('ready', () => { var channel = bot.channels.get("457590277683544084"); bo
   },
   fields:[{name:'Info',value:'OchaBot is currently fighting with database problems!'}]
   }});
-});
+});*/
 bot.on('ready', () => { console.log('OchaBot başladı.')});
 
 bot.login(process.env.token);
