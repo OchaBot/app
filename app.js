@@ -105,6 +105,8 @@ bot.on('message', async message => {
     if (err) throw err;
 
     console.log('Result: ' + res);
+    if(res === '') console.log("'' got this.");
+    else if(res === NULL) console.log("NULL got this.");
   });
 
   if(!userData[sender.id]) userData[sender.id]={};
