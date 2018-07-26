@@ -7,12 +7,11 @@ const client = new Client({
 });
 
 client.connect();
-
-client.query('CREATE TABLE (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userID BIGINT(30), puan INT, xp INT, count INT, drinkKind varchar(255) ,level INT ,lng varchar(255) ,sure varchar(255) ,timecount varchar(255))'), (err, res) => {
+var sql = 'CREATE TABLE userData (userID BIGINT(30) PRIMARY KEY, puan INT, xp INT, count INT, drinkKind VARCHAR(255), level INT, lng VARCHAR(255), sure VARCHAR(255), timecount VARCHAR(255))';
+client.query(sql), (err, res) => {
   if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
+    //console.log(JSON.stringify(row));
+  console.log("Result : " + res);
   client.end();
 };
 
