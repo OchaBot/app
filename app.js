@@ -9,15 +9,7 @@ const prefix='-';
 // userData2 => userData
 let userData= JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
 
-connection.connect();
-
-connection.query('CREATE TABLE userData(userID BIGINT(30) PRIMARY KEY, xp INT, level INT, count INT, sure VARCHAR(255), timecount VARCHAR(255), drinkKind VARCHAR(255), lng VARCHAR(255))', function(err, res) {
-  if (err) throw err;
-
-  console.log('Result: ', res);
-});
-
-connection.end();
+connection.connect((err) => {if(err) console.error(err); else console.log("Connected to JawsDB MySQL database.")});
 
 bot.on('guildMemberAdd', member => {
   // Send the message to a designated channel on a server:
@@ -37,11 +29,7 @@ bot.on('message', async message => {
 
 	let msg = message.content.toUpperCase();
 	let sender = message.author;
-  if(sender.id === '292688279839703040')
-  {
-      message.editCode(message.content)
-      .catch((err) => {console.log(err)});
-  }
+  //if(sender.id === '292688279839703040')
 	let args = msg.slice(1).trim().split(" ");
 
   var date = new Date();
@@ -50,6 +38,28 @@ bot.on('message', async message => {
     var min = 10;
     var max = 30;
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function updateData()
+  {
+    let sql = '';
+
+    connection.query(sql, function(err, res) {
+      if (err) throw err;
+
+      console.log('affectedRows: ' + res.affectedRows);
+    });
+  }
+
+  function createData()
+  {
+    let sql = 'INSERT INTO userData(userID,xp,level,drinkKind,lng) VALUES ("' + sender.id + '", 0, 0, "Çay", "tr")';
+
+    connection.query(sql, function(err, res) {
+      if (err) throw err;
+
+      console.log('affectedRows: ' + res.affectedRows);
+    });
   }
 
   function writeData()
@@ -88,6 +98,14 @@ bot.on('message', async message => {
        }});
      }
   }
+
+  let sql = 'SELECT userID FROM userData';
+
+  connection.query(sql, function(err, res) {
+    if (err) throw err;
+
+    console.log('Result: ' + res);
+  });
 
   if(!userData[sender.id]) userData[sender.id]={};
   if(!userData[sender.id].lng)
