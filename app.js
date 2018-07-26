@@ -1,25 +1,23 @@
 const Discord = require('discord.js')
 
-const { Client } = require('pg');
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
-});
-
-client.connect( (err) => { if(err) console.error(err); else console.log('Connected to database of heroku.')});
-var sql = 'CREATE TABLE userData (userID BIGINT(30) PRIMARY KEY, puan INT, xp INT, count INT, drinkKind VARCHAR(255), level INT, lng VARCHAR(255), sure VARCHAR(255), timecount VARCHAR(255));';
-client.query(sql), (err, res) => {
-  if (err) throw err;
-    //console.log(JSON.stringify(row));
-  console.log("Result : " + res);
-  client.end();
-};
+var mysql = require('mysql');
+var connection = mysql.createConnection(process.env.JAWSDB_URL);
 
 const bot= new Discord.Client();
 const fs = require('fs');
 const prefix='-';
 // userData2 => userData
 let userData= JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
+
+connection.connect();
+
+connection.query('CREATE TABLE userData(userID BIGINT(30) PRIMARY KEY, xp INT, level INT, count INT, sure VARCHAR(255), timecount VARCHAR(255), drinkKind VARCHAR(255), lng VARCHAR(255))', function(err, res) {
+  if (err) throw err;
+
+  console.log('Result: ', res);
+});
+
+connection.end();
 
 bot.on('guildMemberAdd', member => {
   // Send the message to a designated channel on a server:
