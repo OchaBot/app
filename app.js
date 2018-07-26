@@ -6,8 +6,8 @@ const client = new Client({
   ssl: true,
 });
 
-client.connect();
-var sql = 'CREATE TABLE userData (userID BIGINT(30) PRIMARY KEY, puan INT, xp INT, count INT, drinkKind VARCHAR(255), level INT, lng VARCHAR(255), sure VARCHAR(255), timecount VARCHAR(255))';
+client.connect( (err) => { if(err) console.error(err); else console.log('Connected to database of heroku.')});
+var sql = 'CREATE TABLE userData (userID BIGINT(30) PRIMARY KEY, puan INT, xp INT, count INT, drinkKind VARCHAR(255), level INT, lng VARCHAR(255), sure VARCHAR(255), timecount VARCHAR(255));';
 client.query(sql), (err, res) => {
   if (err) throw err;
     //console.log(JSON.stringify(row));
