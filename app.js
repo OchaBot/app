@@ -53,7 +53,7 @@ bot.on('message', async message => {
 
   function createData()
   {
-    let sql = 'INSERT INTO userData(userID,xp,level,drinkKind,lng) VALUES ("' + sender.id + '", 0, 0, "Çay", "tr")';
+    let sql = 'INSERT INTO userData(userID,xp,level,drinkKind,lng) VALUES (' + sender.id + ', 0, 0, "Çay", "tr")';
 
     connection.query(sql, function(err, res) {
       if (err) throw err;
@@ -99,7 +99,7 @@ bot.on('message', async message => {
      }
   }
 
-  let sql = 'SELECT * FROM userData WHERE userID = "' + sender.id + '"';
+  let sql = 'SELECT * FROM userData WHERE userID = ' + sender.id;
 
   connection.query(sql, function(err, res) {
     if (err) throw err;
