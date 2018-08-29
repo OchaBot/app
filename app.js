@@ -105,7 +105,7 @@ bot.on('message', async message => {
     if (err) throw err;
 
     console.log('Result: ' + res.count);
-    if(res === 0) console.log("0 got this.");
+    if(res === undefined) console.log("0 got this.");
   });
 
   if(!userData[sender.id]) userData[sender.id]={};
@@ -569,5 +569,5 @@ bot.on('message', async message => {
 });*/
 bot.on('ready', () => { console.log('OchaBot başladı.')});
 
-bot.login(process.env.token);
+bot.login(process.env.testtoken);
 //process.env.token
