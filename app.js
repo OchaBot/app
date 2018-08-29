@@ -99,7 +99,7 @@ bot.on('message', async message => {
      }
   }
 
-  let sql = 'SELECT userID FROM userData';
+  let sql = 'SELECT * FROM userData WHERE userID = "' + sender.id + '"';
 
   connection.query(sql, function(err, res) {
     if (err) throw err;
