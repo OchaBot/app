@@ -104,8 +104,8 @@ bot.on('message', async message => {
   connection.query(sql, function(err, res) {
     if (err) throw err;
 
-    console.log('Result: ' + res.count);
-    if(res === undefined) console.log("0 got this.");
+    console.log('Result: ' + res);
+    if(res.count === undefined) console.log("0 got this.");
   });
 
   if(!userData[sender.id]) userData[sender.id]={};
